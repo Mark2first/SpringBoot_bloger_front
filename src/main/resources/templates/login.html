@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登陆页面</title>
+    <style>
+        form{
+            text-align: center;
+        }
+    </style>
+    <link rel="stylesheet" th:href="@{/plugins/elementui/index.css}">
+    <link rel="stylesheet" th:href="@{/plugins/font-awesome/css/font-awesome.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div id="app">
+        <!--原登陆UI-->
+        <form th:action="@{/login}" style="align-content: center">
+            username:<input type="text" name="username"/><br>
+            password:<input type="password" name="password"/><br>
+            <!--Message提示用户名或密码错误-->
+            <p style="color: red" th:text="${msg}" th:if="${not #strings.isEmpty(msg)}"></p>
+            <input type="submit" value="提交">
+        </form>
+    </div>
+</body>
+<script th:src="@{/js/vue.js}"></script>
+<script th:src="@{/plugins/elementui/index.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/axios-0.18.0.js}"></script>
+
+<script>
+    new Vue({
+        el: "#app",
+        data:{
+            loginRules: {
+                username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+                password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+            },
+        },
+        methods:{
+        },
+
+        //钩子函数，用于页面加载
+        created(){
+
+        },
+        computed:{}
+    })
+</script>
+
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" th:href="@{/plugins/elementui/index.css}">
+    <link rel="stylesheet" th:href="@{/plugins/font-awesome/css/font-awesome.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div id="app">
+        <template>
+            <!--显示数据所用表格-->
+            <el-table :data="tableData" current-row-key="articleId" border style="width: 100%">
+                <el-table-column prop="articleId" label="文章ID" width="75" align="center"></el-table-column>
+                <el-table-column prop="articleTitle" label="文章标题" width="400" align="center"></el-table-column>
+                <el-table-column prop="articleCreateTime" label="创作日期" width="400" align="center"></el-table-column>
+                <el-table-column prop="articleStatus" label="发布状态" width="75" align="center"></el-table-column>
+                <el-table-column fixed="right" label="操作" >
+                    <template slot-scope="scope">
+                        <el-button @click="showArticle(scope.row)" type="text" size="small">编辑</el-button>
+                        <el-button @click="deleteArticle(scope.row)" type="text" size="small">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+            <!--编辑文章弹窗-->
+            <el-dialog title="编辑文章" :visible.sync="dialogVisibleEdit" width="51.9%">
+                <el-form ref="dataEditForm" :model="formData">
+                    <el-row>
+                        <el-col :span="6"><div style="margin:5px 0 0 0" prop="articleTitle">文章题目:</div></el-col>
+                        <el-col :span="18"><el-input size=small placeholder="文章题目" v-model="formData.articleTitle"></el-input></el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="6"><div style="margin:5px 0 0 0" prop="articleContent">文章内容:</div></el-col>
+                        <el-col :span="18">
+                            <el-input
+                                type="textarea"
+                                :rows="2"
+                                placeholder="请输入内容"
+                                v-model="formData.articleContent">
+                        </el-input>
+                        </el-col>
+                    </el-row>
+                </el-form>
+                <span slot="footer" class="dialog-footer">
+                        <el-button @click="dialogVisibleEdit = false">取 消</el-button>
+                        <el-button type="primary" @click="editArticle()">确 定</el-button>
+                    </span>
+            </el-dialog>
+        </template>
+    </div>
+</body>
+
+<script th:src="@{/js/vue.js}"></script>
+<script th:src="@{/plugins/elementui/index.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/axios-0.18.0.js}"></script>
+
+<script>
+    new Vue({
+        el: "#app",
+        data:{
+            dialogVisibleEdit:false,
+            tableData: [],
+            formData:{}
+        },
+        methods:{
+            <!--调用后台数据，使用axios包，所有数据都是存入tableData中-->
+            getInfrom(){
+                axios.get("/admin/article/us").then((res)=>{
+                   this.tableData = res.data.data;
+                });
+            },
+            <!--删除文章信息-->
+            deleteArticle(row){
+                this.$confirm("此操作永久删除当前信息，是否继续？","提升",{type:"info"}).then(()=>{
+                    axios.delete("/admin/article/"+row.articleId).then((res)=>{
+                        if(res.data.flag){
+                            this.$message.success("删除成功");
+                        }else{
+                            this.$message.error("删除失败");
+                        }
+                    }).finally(()=>{
+                        this.getInfrom();
+                    });
+                }).catch(()=>{
+                    this.$message.info("取消操作")
+                });
+            },
+            <!--展示用户信息-->
+            showArticle(row){
+                axios.get("/admin/article/"+row.articleId).then((res)=>{
+                    if(res.data.flag && res.data.data != null){
+                        this.dialogVisibleEdit = true;
+                        this.formData = res.data.data;
+                    }else{
+                        this.$message.error("数据同步失败，自动刷新");
+                    }
+                }).finally(()=>{
+                    this.getInfrom()
+                });
+            },
+            <!--修改文章-->
+            editArticle(){
+                axios.put("/admin/article",this.formData).then((res)=>{
+                    if(res.data.flag){
+                        this.dialogVisibleEdit = false;
+                        this.$message.success(res.data.msg);
+                    }else{
+                        this.$message.error(res.data.msg);
+                    }
+                }).finally(()=>{
+                    this.getInfrom();
+                });
+            }
+        },
+
+        //钩子函数，用于页面加载
+        created(){
+            this.getInfrom();
+        },
+        computed:{}
+    })
+</script>
+</html>

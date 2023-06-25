@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" th:href="@{/plugins/elementui/index.css}">
+    <link rel="stylesheet" th:href="@{/plugins/font-awesome/css/font-awesome.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div id="app">
+        <template>
+            <el-row>
+                <el-col :span="3"><el-button size="small" type="primary" @click="dialogVisibleInsert=true">新建用户</el-button></el-col>
+            </el-row>
+            <!--显示数据所用表格-->
+            <el-table :data="tableData" current-row-key="userId" border style="width: 100%">
+                <el-table-column prop="userId" label="用户ID" width="75" align="center"></el-table-column>
+                <el-table-column prop="userName" label="用户名" width="100" align="center"></el-table-column>
+                <el-table-column prop="userNickname" label="用户昵称" width="150" align="center"></el-table-column>
+                <el-table-column prop="userEmail" label="用户邮箱" width="300" align="center"></el-table-column>
+                <el-table-column prop="userUrl" label="用户网站" width="300" align="center"></el-table-column>
+                <el-table-column fixed="right" label="操作" >
+                    <template slot-scope="scope">
+                        <el-button @click="showUser(scope.row)" type="text" size="small">编辑</el-button>
+                        <el-button @click="deleteUser(scope.row)" type="text" size="small">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+            <!--编辑用户弹窗-->
+            <el-dialog title="编辑用户" :visible.sync="dialogVisibleEdit" width="51.9%">
+                <el-form ref="dataEditForm" :model="formData">
+                    <el-row>
+                        <el-col :span="6"><div style="margin:5px 0 0 0" prop="userId">用户id:</div></el-col>
+                        <el-col :span="18"><el-input size=small placeholder="默认值，不可更改" v-model="formData.userId" disabled="true"></el-input></el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="6"><div style="margin:5px 0 0 0" prop="userName">用户名:</div></el-col>
+                        <el-col :span="18"><el-input size=small placeholder="用户名称" v-model="formData.userName"></el-input></el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="6"><div style="margin:5px 0 0 0" prop="userNickname">用户昵称:</div></el-col>
+                        <el-col :span="18"><el-input size=small placeholder="用户昵称" v-model="formData.userNickname"></el-input></el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="6"><div style="margin:5px 0 0 0" prop="userEmail">用户邮箱:</div></el-col>
+                        <el-col :span="18"><el-input size=small placeholder="用户邮箱" v-model="formData.userEmail"></el-input></el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="6"><div style="margin:5px 0 0 0" prop="userEmail">用户网址:</div></el-col>
+                        <el-col :span="18"><el-input size=small placeholder="用户网址" v-model="formData.userUrl"></el-input></el-col>
+                    </el-row>
+
+                </el-form>
+                <span slot="footer" class="dialog-footer">
+                        <el-button @click="dialogVisibleEdit = false">取 消</el-button>
+                        <el-button type="primary" @click="editUser()">确 定</el-button>
+                    </span>
+            </el-dialog>
+
+            <!--新建用户弹窗-->
+            <el-dialog title="编辑用户" :visible.sync="dialogVisibleInsert" width="51.9%">
+                <el-form ref="dataInsertForm" :model="formData">
+                    <el-row>
+                        <el-col :span="6"><div style="margin:5px 0 0 0" prop="userName">用户名:</div></el-col>
+                        <el-col :span="18"><el-input size=small placeholder="用户名称" v-model="formData.userName"></el-input></el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="6"><div style="margin:5px 0 0 0" prop="userNickname">用户昵称:</div></el-col>
+                        <el-col :span="18"><el-input size=small placeholder="用户昵称" v-model="formData.userNickname"></el-input></el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="6"><div style="margin:5px 0 0 0" prop="userEmail">用户邮箱:</div></el-col>
+                        <el-col :span="18"><el-input size=small placeholder="用户邮箱" v-model="formData.userEmail"></el-input></el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="6"><div style="margin:5px 0 0 0" prop="userEmail">用户网址:</div></el-col>
+                        <el-col :span="18"><el-input size=small placeholder="用户网址" v-model="formData.userUrl"></el-input></el-col>
+                    </el-row>
+
+                </el-form>
+                <span slot="footer" class="dialog-footer">
+                        <el-button @click="dialogVisibleInsert = false">取 消</el-button>
+                        <el-button type="primary" @click="InsertUser()">确 定</el-button>
+                    </span>
+            </el-dialog>
+        </template>
+    </div>
+</body>
+
+<script th:src="@{/js/vue.js}"></script>
+<script th:src="@{/plugins/elementui/index.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/axios-0.18.0.js}"></script>
+
+<style>
+    .el-row {
+        margin-bottom: 20px;
+    &:last-child {
+         margin-bottom: 0;
+     }
+    }
+    .el-col {
+        border-radius: 4px;
+    }
+    .bg-purple-dark {
+        background: #99a9bf;
+    }
+    .bg-purple {
+        background: #d3dce6;
+    }
+    .bg-purple-light {
+        background: #e5e9f2;
+    }
+    .grid-content {
+        border-radius: 4px;
+        min-height: 36px;
+    }
+    .row-bg {
+        padding: 10px 0;
+        background-color: #f9fafc;
+    }
+</style>
+
+<script>
+    new Vue({
+        el: "#app",
+        data:{
+            dialogVisibleEdit:false,
+            dialogVisibleDelete:false,
+            dialogVisibleInsert:false,
+            tableData: [],
+            formData:{}
+        },
+        methods:{
+            <!--调用后台数据，使用axios包，所有数据都是存入tableData中-->
+            getInfrom(){
+                axios.get("/admin/user").then((res)=>{
+                    this.tableData = res.data.data;
+                });
+            },
+            <!--增加用户信息-->
+            InsertUser(){
+                axios.post("/admin/user",this.formData).then((res)=>{
+                    if(res.data.flag){
+                        this.dialogVisibleInsert = false;
+                        this.$message.success(res.data.msg);
+                    }else{
+                        this.$message.error(res.data.msg);
+                    }
+                }).finally(()=>{
+                    this.getInfrom();
+                });
+            },
+            <!--显示单个用户信息-->
+            showUser(row){
+                axios.get("/admin/user/"+row.userId).then((res)=>{
+                    if(res.data.flag && res.data.data != null){
+                        this.dialogVisibleEdit = true;
+                        this.formData = res.data.data;
+                    }else{
+                        this.$message.error("数据同步失败，自动刷新");
+                    }
+                }).finally(()=>{
+                    this.getInfrom()
+                });
+            },
+            <!--更改用户信息-->
+            editUser(){
+                axios.put("/admin/user",this.formData).then((res)=>{
+                    if(res.data.flag){
+                        this.dialogVisibleEdit = false;
+                        this.$message.success(res.data.msg);
+                    }else{
+                        this.$message.error(res.data.msg);
+                    }
+                }).finally(()=>{
+                    this.getInfrom();
+                });
+            },
+            <!--删除用户信息-->
+            deleteUser(row){
+                this.$confirm("此操作永久删除当前信息，是否继续？","提升",{type:"info"}).then(()=>{
+                    axios.delete("/admin/user/"+row.userId).then((res)=>{
+                        if(res.data.flag){
+                            this.$message.success("删除成功");
+                        }else{
+                            this.$message.error("删除失败");
+                        }
+                    }).finally(()=>{
+                        this.getInfrom();
+                    });
+                }).catch(()=>{
+                    this.$message.info("取消操作")
+                });
+            }
+        },
+
+        //钩子函数，用于页面加载
+        created(){
+            this.getInfrom();
+        },
+        computed:{}
+    })
+</script>
+</html>

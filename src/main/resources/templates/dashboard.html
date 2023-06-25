@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" th:href="@{/plugins/elementui/index.css}">
+    <link rel="stylesheet" th:href="@{/plugins/font-awesome/css/font-awesome.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div id="app">
+        <el-container style="height:800px;border: 1px solid #eee;">
+            <el-header style="text-align: right; font-size: 12px">
+                <el-dropdown>
+                    <i class="el-icon-setting" style="margin-right: 15px"></i>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item><a th:href="@{/logout}">退出</a></el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+                <span>[[${session.user.userNickname}]]</span>
+            </el-header>
+
+            <el-container>
+                <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
+                    <el-menu :default-openeds="['1', '2']">
+                        <el-submenu index="1">
+                            <template slot="title"><i class="el-icon-message"></i>事项管理</template>
+                            <el-menu-item-group>
+                                <el-menu-item index="1-1" th:if="${session.user.userRole == 'admin'}">
+                                    <a th:href="@{/AdminArticle.html}"
+                                       th:target="iframe">管理文章</a>
+                                </el-menu-item>
+                                <el-menu-item index="1-1" th:if="${session.user.userRole == 'user'}">
+                                    <a th:href="@{/AdminArticleUser.html}"
+                                       th:target="iframe">我的文章</a>
+                                </el-menu-item>
+                                <el-menu-item index="1-1">
+                                    <a th:href="@{/AdminArticleInsert.html}" th:target="iframe">新建文章</a>
+                                </el-menu-item>
+                            </el-menu-item-group>
+                        </el-submenu>
+                        <el-submenu index="2" th:if="${session.user.userRole == 'admin'}">
+                            <template slot="title"><i class="el-icon-menu"></i>用户管理</template>
+                            <el-menu-item-group>
+                                <el-menu-item index="2-1">
+                                    <a th:href="@{/AdminUser.html}" th:target="iframe">用户列表</a>
+                                </el-menu-item>
+                            </el-menu-item-group>
+                        </el-submenu>
+
+                    </el-menu>
+                </el-aside>
+
+                <el-main>
+                    <iframe name="iframe" class="el-main" width="100%" height="100%"></iframe>
+                </el-main>
+            </el-container>
+        </el-container>
+    </div>
+</body>
+
+<style>
+    .el-header {
+        background-color: #B3C0D1;
+        color: #333;
+        line-height: 60px;
+    }
+    .el-aside {
+        color: #333;
+    }
+    .el-main{
+        /*top:8px;*/
+        /*left: 8px;*/
+        position: relative;
+        border: white;
+        padding: 0;
+    }
+</style>
+
+<script th:src="@{/js/vue.js}"></script>
+<script th:src="@{/plugins/elementui/index.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/axios-0.18.0.js}"></script>
+
+<script>
+    new Vue({
+        el: "#app",
+        data:{
+
+        },
+        methods:{
+            handleSelect(key, keyPath) {
+                console.log(key, keyPath);
+            },
+
+        },
+
+        //钩子函数，用于页面加载
+        created(){
+
+        },
+        computed:{}
+    })
+</script>
+</html>

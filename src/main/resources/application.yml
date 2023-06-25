@@ -1,0 +1,24 @@
+server:
+  port: 8081
+spring:
+  datasource:
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+#      url: jdbc:mysql://1.117.152.3:3306/forest_blog?serverTimezone=UTC
+#      url: jdbc:mysql://mysql:3306/forest_blog?serverTimezone=UTC
+      url: jdbc:mysql://localhost:3306/forest_blog?serverTimezone=UTC
+      username: root
+      password: 20001009
+  thymeleaf:
+    mode: HTML
+    encoding: UTF-8
+    cache: false
+    servlet:
+      content-type: text/html
+
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: auto
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

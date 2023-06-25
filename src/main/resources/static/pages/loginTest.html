@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div id="app">
+        <el-form ref="dataEditForm" :rules="rules" :model="formData" label-position="right" label-width="100px">
+            <el-row>
+                <el-col :span="12">
+                    <el-form-item label="用户名" prop="username">
+                        <el-input v-model="formData.username"/>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="密码" prop="password">
+                        <el-input type="password" v-model="formData.password"/>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+        </el-form>
+        <el-button type="primary" @click="onSubmit()">登陆</el-button>
+    </div>
+</body>
+<script src="../js/vue.js"></script>
+<script src="../plugins/elementui/index.js"></script>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script src="../js/axios-0.18.0.js"></script>
+<script>
+    new Vue({
+        el: "#app",
+        data:{
+            formData:{},
+            rules:{}
+        },
+        methods:{
+            onSubmit() {
+                axios.get("/loginForJWT?username="+this.formData.username+"&password="+this.formData.password).then((res)=>{
+                    if(res.data.flag){
+                        this.$message.success(res.data.msg);
+                    }else{
+                        this.$message.error(res.data.msg);
+                    }
+                });
+            }
+        },
+        created(){
+        },
+        computed:{}
+    })
+</script>
+</html>
